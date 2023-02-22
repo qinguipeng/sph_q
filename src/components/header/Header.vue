@@ -109,11 +109,19 @@ export default {
       // 面试题4：路由组件能不能传递props数据？
       // 答：可以，有3种写法
       //
-      this.$router.push({
-        name: "search",
-        params: { keyword: this.keyword },
-        query: { k: this.keyword.toUpperCase() },
-      });
+      if (this.$route.query) {
+        let location = {
+          name: "search",
+          params: { keyword: this.keyword || undefined },
+        };
+        location.query = this.$route.query;
+        this.$router.push(location);
+      }
+
+      //  this.$router.push({
+      //     name: "search",
+      //     params: { keyword: this.keyword || undefined },
+      //   });
     },
   },
 };

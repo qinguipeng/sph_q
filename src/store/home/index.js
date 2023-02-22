@@ -1,11 +1,13 @@
 // home的小仓库
 
-import { reqCategoryList } from 'api'
+import { reqCategoryList, reqGetBannerList } from 'api'
 
 
 const state = {
     // state的初始数据类型，应与服务器返回的相同
     categoryList: [],
+    // 轮播图数据
+    bannerList: []
 }
 const actions = {
     // 通过在api里面的接口函数request()调用，向服务器发送请求
@@ -32,10 +34,27 @@ const actions = {
     //     });
     // }
 
+
+
+    // 获取首页banner轮播图
+    async getBannerList({ commit }) {
+        let res = await reqGetBannerList();
+        // console.log(res);
+        if (res.code == 200) {
+            commit("GETBANNERLIST", res.data)
+        }
+
+    }
+
+
 }
 const mutations = {
     CATEGORYLIST(state, categoryList) {
         state.categoryList = categoryList
+    },
+
+    GETBANNERLIST(state, bannerList) {
+        state.bannerList = bannerList
     }
 }
 const getters = {}

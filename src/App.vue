@@ -16,6 +16,10 @@ import Footer from "components/footer/Footer.vue";
 export default {
   name: "App",
   components: { Header, Footer },
+  created() {
+    // 通知vuex发请求，存储在仓库中
+    this.$store.dispatch("categoryList");
+  },
 };
 </script>
 

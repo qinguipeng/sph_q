@@ -1,13 +1,17 @@
 <template>
-  <!--列表-->
   <div class="list-container">
     <div class="sortList clearfix">
       <div class="center">
         <!--banner轮播-->
-        <div class="swiper-container" id="mySwiper">
+        <div class="swiper-container">
+          <!-- swiper-wrapper里面每一个slider即为一张图片 -->
           <div class="swiper-wrapper">
-            <div class="swiper-slide">
-              <img src="./images/banner1.jpg" />
+            <div
+              class="swiper-slide"
+              v-for="(carousel, index) in bannerList"
+              :key="carousel.id"
+            >
+              <img :src="carousel.imgUrl" />
             </div>
           </div>
           <!-- 如果需要分页器 -->
@@ -91,12 +95,99 @@
   </div>
 </template>
 
-
-
 <script>
+// 引入vuex内置的mapState函数，映射到computed上
+import { mapState } from "vuex";
+// 引入swiper module
+import Swiper from "swiper";
+//在mounted中 初始化swiper
+
 export default {
   name: "ListContainer",
+
+  mounted() {
+    //派发action,通知vuex发请求
+
+    this.$store.dispatch("getBannerList");
+    // 在new Swiper实例之前，页面中的所有数据必须渲染到DOM上，不然会滚动不了。
+    // dispatch  action的时候涉及异步，导致v-for语句执行的时候结构还没有完全渲染到DOM上，所以不行
+
+    // setTimeout(() => {
+    //   // new 一个Swiper实例，初始化
+    //   var mySwiper = new Swiper(".swiper-container", {
+    //     // direction: "vertical", // 垂直切换选项
+    //     loop: true, // 循环模式选项
+    //     autoplay: true, //等同于以下设置
+
+    //     // 如果需要分页器
+    //     pagination: {
+    //       el: ".swiper-pagination",
+    //       clickable: true,
+    //     },
+
+    //     // 如果需要前进后退按钮
+    //     navigation: {
+    //       nextEl: ".swiper-button-next",
+    //       prevEl: ".swiper-button-prev",
+    //     },
+
+    //     // 如果需要滚动条
+    //     // scrollbar: {
+    //     //   el: ".swiper-scrollbar",
+    //     // },
+    //   });
+    // }, 2000);
+  },
+
+  computed: {
+    ...mapState({
+      bannerList: (state) => {
+        return state.home.bannerList;
+      },
+    }),
+  },
+
+  // ****************************非常重点，难点，热点
+  watch: {
+    // 监听bannerList数据的变化：因为这条数据是由空数组==》四个元素的变化
+    // 使用watch监听bannerList属性的属性值的变化
+    bannerList: {
+      handler(newValue, oldValue) {
+        // console.log("数据有了");
+        // 只能保证store中已经有bannerList中的数据已经存在，但是还需要将其渲染成DOM
+
+        //$nextTick(() => {}) 在下次DOM更新循环结束之后执行延迟回调callback，在修改数据之后立即使用这个方法，获取这个更新之后的DOM
+        this.$nextTick(() => {
+          // 当获取到仓库数据，并且vue完成数据渲染后   new 一个Swiper实例，初始化
+          var mySwiper = new Swiper(".swiper-container", {
+            // direction: "vertical", // 垂直切换选项
+            loop: true, // 循环模式选项
+            autoplay: true, //等同于以下设置
+
+            // 如果需要分页器
+            pagination: {
+              el: ".swiper-pagination",
+              clickable: true,
+            },
+
+            // 如果需要前进后退按钮
+            navigation: {
+              nextEl: ".swiper-button-next",
+              prevEl: ".swiper-button-prev",
+            },
+
+            // 如果需要滚动条
+            // scrollbar: {
+            //   el: ".swiper-scrollbar",
+            // },
+          });
+        });
+      },
+    },
+  },
 };
+
+// **********************************************
 </script>
 
 
@@ -171,7 +262,7 @@ export default {
           width: 25%;
 
           .list-item {
-            background-image: url(./images/icons.png);
+            background-image: url(~@/assets/icons.png);
             width: 61px;
             height: 40px;
             display: block;

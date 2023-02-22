@@ -1,6 +1,7 @@
 // 所有的API进行统一管理
 
 import request from './request'
+import mockRequest from './mockRequest'
 
 
 
@@ -13,3 +14,7 @@ export const reqCategoryList = () => {
         methods: "get"
     })
 }
+
+
+//请求banner（home首页轮播图数据）
+export const reqGetBannerList = () => mockRequest.get("/banner")

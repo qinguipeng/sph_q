@@ -16,7 +16,10 @@ Vue.component(TypeNav.name, TypeNav)
 
 // 引入store数据仓库
 import store from './store'
-
+//
+import "@/mock/mockServer"
+//引入swiper样式，有多个组件需要用到swiper，所以样式可以在入口文件一次引入，全局可用
+import "swiper/css/swiper.css"
 
 
 Vue.config.productionTip = false

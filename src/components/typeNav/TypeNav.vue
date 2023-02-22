@@ -3,70 +3,75 @@
   <div class="type-nav">
     <div class="container">
       <!-- 事件委派  -->
-      <div @mouseleave="leaveIndex()">
+      <div @mouseleave="leaveDiv()" @mouseenter="enterDiv">
         <h2 class="all">全部商品分类</h2>
 
         <!-- 三级联动 -->
-        <div class="sort">
-          <div class="all-sort-list2" @click="goSearch">
-            <div
-              class="item"
-              v-for="(c1, index) in catergoryList.slice(0, 16)"
-              :key="c1.categoryId"
-              :class="{ cur: currentIndex == index }"
-            >
-              <h3 @mouseenter="changeIndex(index)">
-                <!-- 一级菜单 -->
-                <a
-                  href="#"
-                  :data-categoryName="c1.categoryName"
-                  :data-category1Id="c1.categoryId"
-                  >{{ c1.categoryName }}</a
-                >
-              </h3>
-
-              <!-- 二级分类 -->
+        <!-- 过渡动画transition  子元素必须要有v-show||v-if-->
+        <transition name="sort">
+          <div class="sort" v-show="isShow">
+            <div class="all-sort-list2" @click="goSearch">
               <div
-                class="item-list clearfix"
-                :style="{ display: currentIndex == index ? 'block' : 'none ' }"
+                class="item"
+                v-for="(c1, index) in catergoryList.slice(0, 16)"
+                :key="c1.categoryId"
+                :class="{ cur: currentIndex == index }"
               >
-                <div
-                  class="subitem"
-                  v-for="(c2, index) in c1.categoryChild"
-                  :key="c2.categoryId"
-                >
-                  <dl class="fore">
-                    <dt>
-                      <!-- 二级菜单 -->
-                      <a
-                        href="#"
-                        :data-categoryName="c2.categoryName"
-                        :data-category2Id="c2.categoryId"
-                        >{{ c2.categoryName }}</a
-                      >
-                    </dt>
+                <h3 @mouseenter="changeIndex(index)">
+                  <!-- 一级菜单 -->
+                  <a
+                    href="JavaScript:;"
+                    :data-categoryName="c1.categoryName"
+                    :data-category1Id="c1.categoryId"
+                    >{{ c1.categoryName }}</a
+                  >
+                </h3>
 
-                    <!-- 三级分类 -->
-                    <dd>
-                      <em
-                        v-for="(c3, index) in c2.categoryChild"
-                        :key="c3.categoryId"
-                      >
-                        <!-- 三级菜单 -->
+                <!-- 二级分类 -->
+                <div
+                  class="item-list clearfix"
+                  :style="{
+                    display: currentIndex == index ? 'block' : 'none ',
+                  }"
+                >
+                  <div
+                    class="subitem"
+                    v-for="(c2, index) in c1.categoryChild"
+                    :key="c2.categoryId"
+                  >
+                    <dl class="fore">
+                      <dt>
+                        <!-- 二级菜单 -->
                         <a
-                          href="#"
-                          :data-categoryName="c3.categoryName"
-                          :data-category3Id="c3.categoryId"
-                          >{{ c3.categoryName }}</a
+                          href="JavaScript:;"
+                          :data-categoryName="c2.categoryName"
+                          :data-category2Id="c2.categoryId"
+                          >{{ c2.categoryName }}</a
                         >
-                      </em>
-                    </dd>
-                  </dl>
+                      </dt>
+
+                      <!-- 三级分类 -->
+                      <dd>
+                        <em
+                          v-for="(c3, index) in c2.categoryChild"
+                          :key="c3.categoryId"
+                        >
+                          <!-- 三级菜单 -->
+                          <a
+                            href="JavaScript:;"
+                            :data-categoryName="c3.categoryName"
+                            :data-category3Id="c3.categoryId"
+                            >{{ c3.categoryName }}</a
+                          >
+                        </em>
+                      </dd>
+                    </dl>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        </transition>
       </div>
       <nav class="nav">
         <a href="###">服装城</a>
@@ -99,11 +104,16 @@ export default {
   data() {
     return {
       currentIndex: -1,
+      isShow: true,
     };
   },
   created() {
     // 通知vuex发请求，存储在仓库中
-    this.$store.dispatch("categoryList");
+    // this.$store.dispatch("categoryList"); //移动至根组件可以提高性能，因为根组件只会created和mounted一次，并且除关闭程序意外，不会destroy
+    // 先判断是否都处于search路由，再来决定是否选择TypeNav
+    if (this.$route.path !== "/home") {
+      this.isShow = false;
+    }
   },
 
   computed: {
@@ -128,9 +138,18 @@ export default {
       this.currentIndex = index;
     }, 50),
 
-    // 鼠标离开修改一级分类元素
-    leaveIndex() {
-      this.currentIndex = -1;
+    // 鼠标离开Div事件绑定
+    leaveDiv() {
+      this.currentIndex = -1; //修改一级分类元素样式背景
+      if (this.$route.path != "/home") {
+        this.isShow = false;
+      }
+    },
+    // 鼠标进入Div
+    enterDiv() {
+      if (this.$route.path != "/home") {
+        this.isShow = true; //显示下拉列表
+      }
     },
 
     // 路由跳转
@@ -143,10 +162,12 @@ export default {
         element.dataset;
       // 如果标签上游categoryname属性才是a标签
       if (categoryname) {
-        // 区分了是不是a标签，还要区分是哪一级分类的a标签，就再绑定自定义属性
+        // 区分了是不是a标签，还要区分是哪一级分类的a标签，就再绑定自定义属性:
+        // 给子每一级节点的a标签上绑定自定义属性:data-categoryName=""
         // 整理路由跳转要传参数
         let location = { name: "search" };
         let query = { categoreyName: categoryname };
+
         if (category1id) {
           query.category1Id = category1id;
         } else if (category2id) {
@@ -154,10 +175,17 @@ export default {
         } else if (category3id) {
           query.category3Id = category3id;
         }
-        // 参数的整理
-        console.log(location, query);
-        // 路由的跳转
-        this.$router.push("/search");
+        // 判断如果路由跳转的时候，带有params参数，我们也需要将params 传递到search路由页面。
+
+        if (this.$route.params) {
+          // 整理参数
+          // console.log(location, query);
+          location.params = this.$route.params;
+          location.query = query;
+          // console.log(location);
+          // 路由的跳转
+          this.$router.push(location);
+        }
       }
     },
   },
@@ -285,9 +313,25 @@ export default {
         //   background-color: skyblue;
         // }
         .cur {
-          background-color: skyblue;
+          background-color: rgb(225, 37, 27);
         }
       }
+    }
+    // 过渡动画样式
+    // 1.1 鼠标进入开始状态
+    .sort-enter {
+      height: 0px;
+      // transform: rotate(0);
+    }
+    // 1.2鼠标进入结束状态
+    .sort-enter-to {
+      height: 461px;
+      // transform: rotate(360deg);
+    }
+    // 1.3定义动画过渡时间，速率
+    .sort-enter-active {
+      transition: all 0.3s linear;
+      overflow: hidden;
     }
   }
 }
