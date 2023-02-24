@@ -1,18 +1,21 @@
 // home的小仓库
 
-import { reqCategoryList, reqGetBannerList } from 'api'
+import { reqCategoryList, reqGetBannerList, reqGetFloorList } from 'api'
 
 
 const state = {
     // state的初始数据类型，应与服务器返回的相同
     categoryList: [],
     // 轮播图数据
-    bannerList: []
+    bannerList: [],
+    // floor数据
+    floorLIst: []
 }
 const actions = {
+    // 获取首页三级分类数据
     // 通过在api里面的接口函数request()调用，向服务器发送请求
     //1. async和await 方法法
-    async categoryList(state) {
+    async getCategoryList(state) {
         let res = await reqCategoryList();
         // console.log(res); 
         if (res.code == 200) {
@@ -44,8 +47,16 @@ const actions = {
             commit("GETBANNERLIST", res.data)
         }
 
-    }
+    },
 
+    // 获取floor数据
+    async getFloorList({ commit }) {
+        let res = await reqGetFloorList()
+        if (res.code == 200) {
+            // 提交mutation
+            commit("GETFLOORLIST", res.data)
+        }
+    }
 
 }
 const mutations = {
@@ -55,7 +66,11 @@ const mutations = {
 
     GETBANNERLIST(state, bannerList) {
         state.bannerList = bannerList
+    },
+    GETFLOORLIST(state, floorLIst) {
+        state.floorLIst = floorLIst
     }
+
 }
 const getters = {}
 

@@ -14,9 +14,9 @@ const request = axios.create({
     timeout: 5000
 })
 
-// 请求拦截去
+// 请求拦截器
 request.interceptors.request.use((config) => {
-    // config大当中包含一个请求头headerszzzz
+    // config 当中包含一个请求头headers
     return config
 })
 

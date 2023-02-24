@@ -17,8 +17,9 @@ export default {
   name: "App",
   components: { Header, Footer },
   created() {
-    // 通知vuex发请求，存储在仓库中
-    this.$store.dispatch("categoryList");
+    // dispach actions ,获取home异步数据，存储在仓库中
+    this.$store.dispatch("getCategoryList");
+    //
   },
 };
 </script>

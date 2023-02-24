@@ -6,8 +6,12 @@
     <recommend />
     <rank />
     <Like />
-    <floor />
-    <floor />
+    <floor
+      v-for="(floorListItem, index) in floorLIst"
+      :key="floorListItem.id"
+      :list="floorListItem"
+    />
+    <!-- <floor /> -->
     <brand />
   </div>
 </template>
@@ -23,18 +27,24 @@ import Floor from "pages/home/floor/Floor.vue";
 import Brand from "pages/home/brand/Brand.vue";
 
 // 使用vuex上的 辅助函数 mapState 映射为组件身上的computed属性
-// import { mapState } from "vuex";
+import { mapState } from "vuex";
 
 export default {
   name: "Home",
   components: { TypeNav, ListContainer, Recommend, Rank, Like, Floor, Brand },
-
-  // created() {
-  //   console.log(123);
-  // },
+  // 这里不用watch+$nextStick()是因为数据请求是在父组件Home发的，数据已经准备好了
+  created() {
+    //Home路由组件， dispatch actions 获取其子组件的异步数据
+    this.$store.dispatch("getFloorList");
+  },
 
   computed: {
-    // ...mapState(["count"]), //可以再vueDevtoll查看
+    ...mapState({
+      // vuex bindings
+      floorLIst: (state) => {
+        return state.home.floorLIst;
+      },
+    }), //可以再vueDevtoll查看
   },
   methods: {},
 };

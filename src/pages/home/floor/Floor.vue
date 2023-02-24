@@ -3,29 +3,15 @@
   <div class="floor">
     <div class="py-container">
       <div class="title clearfix">
-        <h3 class="fl">家用电器</h3>
+        <h3 class="fl">{{ list.name }}</h3>
         <div class="fr">
           <ul class="nav-tabs clearfix">
-            <li class="active">
-              <a href="#tab1" data-toggle="tab">热门</a>
-            </li>
-            <li>
-              <a href="#tab2" data-toggle="tab">大家电</a>
-            </li>
-            <li>
-              <a href="#tab3" data-toggle="tab">生活电器</a>
-            </li>
-            <li>
-              <a href="#tab4" data-toggle="tab">厨房电器</a>
-            </li>
-            <li>
-              <a href="#tab5" data-toggle="tab">应季电器</a>
-            </li>
-            <li>
-              <a href="#tab6" data-toggle="tab">空气/净水</a>
-            </li>
-            <li>
-              <a href="#tab7" data-toggle="tab">高端电器</a>
+            <li
+              class="active"
+              v-for="(navList, index) in list.navList"
+              :key="index"
+            >
+              <a :href="navList.url" data-toggle="tab">{{ navList.text }}</a>
             </li>
           </ul>
         </div>
@@ -35,49 +21,52 @@
           <div class="floor-1">
             <div class="blockgary">
               <ul class="jd-list">
-                <li>节能补贴</li>
-                <li>4K电视</li>
-                <li>空气净化器</li>
-                <li>IH电饭煲</li>
-                <li>滚筒洗衣机</li>
-                <li>电热水器</li>
+                <li v-for="(keywords, index) in list.keywords" :key="index">
+                  {{ keywords }}
+                </li>
               </ul>
-              <img src="./images/floor-1-1.png" />
+              <img :src="list.imgUrl" />
             </div>
             <div class="floorBanner">
-              <div class="swiper-container" id="floor1Swiper">
+              <!-- 轮播图 抽取公共组件,传入要遍历的数组-->
+              <Carousel :list="list.carouselList" />
+              <!-- <div class="swiper-container" id="floor1Swiper" ref="caro">
                 <div class="swiper-wrapper">
-                  <div class="swiper-slide">
-                    <img src="./images/floor-1-b01.png" />
+                  <div
+                    class="swiper-slide"
+                    v-for="(carouselList, index) in list.carouselList"
+                    :key="carouselList.id"
+                  >
+                    <img :src="carouselList.imgUrl" />
                   </div>
                 </div>
-                <!-- 如果需要分页器 -->
+               
                 <div class="swiper-pagination"></div>
 
-                <!-- 如果需要导航按钮 -->
+              
                 <div class="swiper-button-prev"></div>
                 <div class="swiper-button-next"></div>
-              </div>
+              </div> -->
             </div>
             <div class="split">
               <span class="floor-x-line"></span>
               <div class="floor-conver-pit">
-                <img src="./images/floor-1-2.png" />
+                <img :src="list.recommendList[0]" />
               </div>
               <div class="floor-conver-pit">
-                <img src="./images/floor-1-3.png" />
+                <img :src="list.recommendList[1]" />
               </div>
             </div>
             <div class="split center">
-              <img src="./images/floor-1-4.png" />
+              <img :src="list.bigImg" />
             </div>
             <div class="split">
               <span class="floor-x-line"></span>
               <div class="floor-conver-pit">
-                <img src="./images/floor-1-5.png" />
+                <img :src="list.recommendList[2]" />
               </div>
               <div class="floor-conver-pit">
-                <img src="./images/floor-1-6.png" />
+                <img :src="list.recommendList[3]" />
               </div>
             </div>
           </div>
@@ -89,8 +78,83 @@
 
 
 <script>
+// 引入swiper
+// import Swiper from "swiper"; //抽取
+import Carousel from "components/carousel/Carousel.vue";
+
 export default {
   name: "Floor",
+  components: { Carousel },
+  props: ["list"],
+  mounted() {
+    // let mySwiper = new Swiper(this.$refs.caro, {
+    //   // direction: "vertical", // 垂直切换选项
+    //   loop: true, // 循环模式选项
+    //   // autoplay: true, //自动轮播
+    //   autoplay: {
+    //     delay: 3000,
+    //     stopOnLastSlide: true,
+    //     disableOnInteraction: false,
+    //   },
+    //   // 如果需要分页器
+    //   pagination: {
+    //     el: ".swiper-pagination",
+    //     clickable: true,
+    //   },
+    //   // 如果需要前进后退按钮
+    //   navigation: {
+    //     nextEl: ".swiper-button-next",
+    //     prevEl: ".swiper-button-prev",
+    //   },
+    //   // 如果需要滚动条
+    //   // scrollbar: {
+    //   //   el: ".swiper-scrollbar",
+    //   // },
+    // });
+  },
+
+  // 为了封装
+
+  // watch: {
+  //   list: {
+  //     //immediate: 确认是否以当前的初始值执行handler的函数 mmediate:true; 立即执行,当刷新页面时会立即执行一次handler函数
+  //     // 为什么watch监听不到list:因为这个数据在父组件已经请求好，并且在父组件渲染完成后已经将数据初始化，由空数组赋值为请求的数据，放到store.中，这时候如果接下来不在修改仓库中的list数据，watch就监听不到数据变化，就不会有 handler() 回调，回调handler() {}里面的代码就不会执行，vue的compiler编译子组件的时候，数据是直接从仓库中获取的list，所以添加 immediate: true,
+  //     immediate: true,
+  //     handler() {
+  //       //只能监听到数据已经有了，但是v-for动态渲染的结构我们还没有办法确定，因此还是需要用到nextTick
+  //       // console.log("我在监听Floor组件中的list数据");
+  //       this.$nextTick(() => {
+  //         let mySwiper = new Swiper(this.$refs.caro, {
+  //           // direction: "vertical", // 垂直切换选项
+  //           loop: true, // 循环模式选项
+  //           autoplay: true, //自动轮播
+  // autoplay: {
+  //   delay: 3000,
+  //   stopOnLastSlide: true,
+  //   disableOnInteraction: false,
+  // },
+
+  //           // 如果需要分页器
+  //           pagination: {
+  //             el: ".swiper-pagination",
+  //             clickable: true,
+  //           },
+
+  //           // 如果需要前进后退按钮
+  //           navigation: {
+  //             nextEl: ".swiper-button-next",
+  //             prevEl: ".swiper-button-prev",
+  //           },
+
+  //           // 如果需要滚动条
+  //           // scrollbar: {
+  //           //   el: ".swiper-scrollbar",
+  //           // },
+  //         });
+  //       });
+  //     },
+  //   },
+  // },
 };
 </script>
 
