@@ -152,27 +152,29 @@ export default {
       }
     },
 
-    // 路由跳转
-    // 传入一个事件对象event,利用事件对象的属性实现点击的必须是我们设定的a标签内绑定的自定义属性data-categoreyName=""
+    // 路由跳转**************************************这里很关键
+    // 传入一个事件对象event,利用事件对象的属性实现点击的必须是我们设定的a标签内绑定的自定义属性data-categoryName=""
     goSearch(event) {
-      let element = event.target;
-      // console.log(element);
-      // console.log(element.dataset);
+      let targetNode = event.target;
+      // console.log(targetNode);
+      // console.log(targetNode.dataset);
       let { categoryname, category1id, category2id, category3id } =
-        element.dataset;
+        targetNode.dataset;
       // 如果标签上游categoryname属性才是a标签
       if (categoryname) {
         // 区分了是不是a标签，还要区分是哪一级分类的a标签，就再绑定自定义属性:
         // 给子每一级节点的a标签上绑定自定义属性:data-categoryName=""
         // 整理路由跳转要传参数
         let location = { name: "search" };
-        let query = { categoreyName: categoryname };
-
+        let query = { categoryName: categoryname };
+        //一级分类的a
         if (category1id) {
           query.category1Id = category1id;
         } else if (category2id) {
+          //二级分类的a
           query.category2Id = category2id;
         } else if (category3id) {
+          //三级分类的a
           query.category3Id = category3id;
         }
         // 判断如果路由跳转的时候，带有params参数，我们也需要将params 传递到search路由页面。

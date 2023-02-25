@@ -22,13 +22,13 @@ const routes = [
         path: "/home",
         component: Home,
         // 元数据meta
-        meta: { show: true }
+        meta: { show: true, title: "首页" }
 
     },
     {
         path: "/search/:keyword?",
         component: Search,
-        meta: { show: true },
+        meta: { show: true, title: "搜索" },
         name: 'search',
         // 路由组件能不能传递props数据？答：可以
         // 1.props:Boolean类型写法,只可以传递params参数
@@ -40,19 +40,30 @@ const routes = [
     {
         path: "/login",
         component: Login,
-        meta: { show: false }
+        meta: { show: false, title: "登录" }
     },
     {
         path: "/rigister",
         component: Rigister,
-        meta: { show: false }
-    }
+        meta: { show: false, title: "注册" }
+    },
+
 ]
 
 
 const router = new VueRouter({
     routes,
+
 })
+
+//全局导航守卫
+
+router.beforeEach((to, from, next) => {
+    // to and from are both route objects. must call `next`.
+    document.title = to.meta.title
+    next()
+})
+
 
 
 export default router

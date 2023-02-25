@@ -8,8 +8,8 @@
             <p>
               <span>请</span>
               <!-- 声明式使用路由组件 -->
-              <router-link to="/login">登录</router-link>
-              <router-link to="/rigister">免费注册</router-link>
+              <router-link to="/login">登录 |</router-link>
+              <router-link to="/rigister"> 免费注册</router-link>
             </p>
           </div>
           <div class="typeList">
@@ -62,6 +62,12 @@ export default {
     return {
       keyword: "",
     };
+  },
+  mounted() {
+    // 通过事件总线清除关键字
+    this.$bus.$on("clear", () => {
+      this.keyword = "";
+    });
   },
   methods: {
     goSearch() {
