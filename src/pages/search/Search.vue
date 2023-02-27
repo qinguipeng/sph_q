@@ -13,18 +13,33 @@
           <!-- 分类的面包屑 -->
           <ul class="fl sui-tag">
             <li class="with-x" v-if="searchParams.categoryName">
-              {{ searchParams.categoryName
-              }}<i @click="removeCategoryanme">×</i>
+              {{ searchParams.categoryName }}
+              <i @click="removeCategoryanme">×</i>
             </li>
             <!-- 关键字的面包屑 -->
             <li class="with-x" v-if="searchParams.keyword">
-              {{ searchParams.keyword }}<i @click="removeKeyword">×</i>
+              {{ searchParams.keyword }}
+              <i @click="removeKeyword(trademark)">×</i>
+            </li>
+            <!-- 品牌的面包屑 -->
+            <li class="with-x" v-if="searchParams.trademark">
+              {{ searchParams.trademark.split(":")[1] }}
+              <i @click="removeTrademark(trademark)">×</i>
+            </li>
+            <!-- 平台的售卖的属性值的面包屑 -->
+            <li
+              class="with-x"
+              v-for="(attrValue, index) in searchParams.props"
+              :key="index"
+            >
+              {{ attrValue.split(":")[1] }}
+              <i @click="removeAttr(index)">×</i>
             </li>
           </ul>
         </div>
 
         <!--selector-->
-        <SearchSelector />
+        <SearchSelector @trademarkInfo="trademarkInfo" @attrInfo="attrInfo" />
 
         <!--details-->
         <div class="details clearfix">
@@ -185,7 +200,7 @@ export default {
   },
   mounted() {
     //3.获取数据： 测试接口返回的数据
-    this.getDate();
+    this.getData();
   },
   computed: {
     //  ...mapGetters([]),传递的是数组，不区分模块
@@ -195,31 +210,73 @@ export default {
   methods: {
     //向服务器发请求，获取search模块数据，功能：需根据用户在搜索框内输入参数  或 在三级列表中点击的菜单进行相应search模块数据的展示
     //2. 把请求封装成函数：当需要调用的时候才请求数据
-    getDate() {
+    getData() {
       this.$store.dispatch("getSearchInfo", this.searchParams);
     },
+    // 移除路由分类名称
     removeCategoryanme() {
       this.searchParams.categoryName = undefined;
       this.searchParams.category1Id = undefined;
       this.searchParams.category2Id = undefined;
       this.searchParams.category3Id = undefined;
-      this.getDate();
+      this.getData();
       //地址栏也要改：进行路由跳转，自己跳自己
       if (this.$route.params) {
         this.$router.push({ name: "search", params: this.$route.params });
       }
     },
+    // 点击删除searchParams关键字，实现关键字控制的面包屑不显示
     removeKeyword() {
       // 给服务器带的参数searchParams的keyword置空
       this.searchParams.keyword = undefined;
       // 再次发送请求
-      this.getDate();
+      this.getData();
       // 通知兄弟组件Header清除keyword
       this.$bus.$emit("clear");
       // 进行路由的跳转
       if (this.$route.query) {
         this.$router.push({ name: "search", query: this.$route.query });
       }
+    },
+    //自定义事件回调,子组件点击显示相应的面包屑
+    trademarkInfo(trademark) {
+      //1. 整理参数:品牌: "ID:品牌名称"
+      this.searchParams.trademark = `${trademark.tmId}:${trademark.tmName}`;
+      //2. 再次发请求，展示数据
+      this.getData();
+
+      // console.log("我是父组件", trademark);
+    },
+    // 点击移除
+    removeTrademark(trademark) {
+      this.searchParams.trademark = undefined;
+      // 再次发送请求
+      this.getData();
+      // 通知兄弟组件Header清除keyword
+      this.$bus.$emit("clear");
+      // 进行路由的跳转
+      if (this.$route.query) {
+        this.$router.push({ name: "search", query: this.$route.query });
+      }
+    },
+    // 收集平台售卖属性的回调
+    attrInfo(attr, attrValue) {
+      //  ["属性ID:属性值:属性名"]
+      // 整理参数格式
+      let prop = `${attr.attrId}:${attrValue}:${attr.attrName}`;
+      if (this.searchParams.props.indexOf(prop) == -1) {
+        this.searchParams.props.push(prop);
+      }
+      // 再次发请求
+      this.getData();
+
+      // console.log(attr, attrValue);
+    },
+    // 点击移除
+    removeAttr(index) {
+      this.searchParams.props.splice(index, 1);
+      // 再次发请求
+      this.getData();
     },
   },
 
@@ -231,7 +288,7 @@ export default {
       Object.assign(this.searchParams, this.$route.query, this.$route.params);
       //3. 在发送请求
 
-      this.getDate();
+      this.getData();
       // 每一次请求完毕，应该把相应的1、2、3级id清空
       this.searchParams.category1Id = undefined;
       this.searchParams.category2Id = undefined;

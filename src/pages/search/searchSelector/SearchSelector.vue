@@ -4,7 +4,11 @@
       <div class="fl key brand">品牌</div>
       <div class="value logos">
         <ul class="logo-list">
-          <li v-for="(trademark, index) in trademarkList" :key="trademark.tmId">
+          <li
+            v-for="(trademark, index) in trademarkList"
+            :key="trademark.tmId"
+            @click="trademarkHandler(trademark)"
+          >
             {{ trademark.tmName }}
           </li>
         </ul>
@@ -22,7 +26,12 @@
       <div class="fl key">{{ attr.attrName }}</div>
       <div class="fl value">
         <ul class="type-list">
-          <li v-for="(attrValue, index) in attr.attrValueList" :key="index">
+          <!-- 平台相应售卖的属性的属性值 -->
+          <li
+            v-for="(attrValue, index) in attr.attrValueList"
+            :key="index"
+            @click="attrInfo(attr, attrValue)"
+          >
             <a>{{ attrValue }}</a>
           </li>
         </ul>
@@ -39,6 +48,20 @@ export default {
   name: "SearchSelector",
   computed: {
     ...mapGetters(["trademarkList", "attrsList"]),
+  },
+  methods: {
+    // 品牌事件处理函数
+    trademarkHandler(trademark) {
+      // 问题：在哪个组件发请求
+      //
+      this.$emit("trademarkInfo", trademark);
+    },
+    // 平台售卖属性值的点击事件
+    attrInfo(attr, attrValue) {
+      //  ["属性ID:属性值:属性名"]
+      this.$emit("attrInfo", attr, attrValue);
+      // console.log(attr, attrValue);
+    },
   },
 };
 </script>
