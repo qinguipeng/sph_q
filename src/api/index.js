@@ -52,3 +52,11 @@ export const reqGetSearchInfo = (params) => {
         data: params
     })
 }
+
+// 获取商品详情信息的接口 地址：/api/item/{ skuId }   方式：GET   参数必选：skuId
+export const reqGoodsInfo = function(skuId) {
+    return request({
+        url: `/api/item/${ skuId }`,
+        method: "get"
+    })
+}

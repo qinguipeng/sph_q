@@ -9,12 +9,12 @@ import Home from 'pages/home/Home.vue'
 import Search from 'pages/search/Search'
 import Login from 'pages/login/Login.vue'
 import Rigister from 'pages/rigister/Rigister.vue'
+import Detail from 'pages/detail/Detail.vue'
 
 const routes = [
     // 注册路由组件
 
     {
-
         path: "",
         redirect: "/home"
     },
@@ -47,13 +47,21 @@ const routes = [
         component: Rigister,
         meta: { show: false, title: "注册" }
     },
+    {
+        path: "/detail:skuid",
+        component: Detail,
+        meta: { show: false, title: "商品详情" }
+    }
 
 ]
 
 
 const router = new VueRouter({
     routes,
-
+    scrollBehavior(to, from, savedPosition) {
+        // return 期望滚动到哪个的位置
+        return { y: 0 }
+    }
 })
 
 //全局导航守卫
@@ -63,7 +71,5 @@ router.beforeEach((to, from, next) => {
     document.title = to.meta.title
     next()
 })
-
-
 
 export default router
