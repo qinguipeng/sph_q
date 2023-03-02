@@ -78,7 +78,7 @@
                   <div class="p-img">
                     <!-- <a href="item.html" target="_blank"> -->
                     <!-- 路由跳转的时候需要带参数 -->
-                    <router-link :to="`/detail${good.id}`">
+                    <router-link :to="`/detail/${good.id}`">
                       <img :src="good.defaultImg" />
                     </router-link>
 

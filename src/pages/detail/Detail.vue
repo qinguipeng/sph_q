@@ -102,12 +102,24 @@
             </div>
             <div class="cartWrap">
               <div class="controls">
-                <input autocomplete="off" class="itxt" />
-                <a href="javascript:" class="plus">+</a>
-                <a href="javascript:" class="mins">-</a>
+                <input
+                  autocomplete="off"
+                  class="itxt"
+                  v-model="skuNum"
+                  @change="changeSkuNum"
+                />
+                <a href="javascript:" class="plus" @click="skuNum++">+</a>
+                <a
+                  href="javascript:"
+                  class="mins"
+                  @click="skuNum > 1 ? skuNum-- : (skuNum = 1)"
+                  >-</a
+                >
               </div>
               <div class="add">
-                <a href="javascript:">加入购物车</a>
+                <a href="javascript:" @click="addShopCart(skuNum)"
+                  >加入购物车</a
+                >
               </div>
             </div>
           </div>
@@ -356,6 +368,14 @@ export default {
     ImageList,
     Zoom,
   },
+  data() {
+    return {
+      //购买产品的个数
+      skuNum: 1,
+      // 选择的产品参数
+      // skuAttr: [],
+    };
+  },
   mounted() {
     this.$store.dispatch("getGoodInfo", this.$route.params.skuid);
   },
@@ -370,11 +390,65 @@ export default {
   methods: {
     // 商品属性选择点击切换高亮:排他思想
     changeActive(SaleAttrValue, spuSaleAttrValueList) {
+      let skuAttr = {};
       // 遍历
       spuSaleAttrValueList.forEach((item) => {
         item.isChecked = 0;
         SaleAttrValue.isChecked = 1;
+
+        //   // 将参数传递给加入购物车成功页面
+        //   let skuAttrName = `${SaleAttrValue.saleAttrName}`;
+        //   let skuAttrValueName = `${SaleAttrValue.saleAttrValueName}`;
+        //   // console.log(skuAttrName, skuAttrValueName);
+        //   // let skuAttr = {};
+        //   if ((skuAttrName, skuAttrValueName)) {
+        //     skuAttr.skuAttrName = skuAttrName;
+        //     skuAttr.skuAttrValueName = skuAttrValueName;
+        //   }
       });
+    },
+    // 修改产品个数
+    changeSkuNum(event) {
+      let value = event.target.value * 1;
+      if (isNaN(value) || value < 1) {
+        this.skuNum = 1;
+      } else {
+        this.skuNum = parseInt(value);
+      }
+    },
+    // 加入购物车
+    async addShopCart() {
+      // 1.派发请求---将产品加入到数据库
+
+      let res = await this.$store.dispatch("addOrUpdateShopCart", {
+        skuId: this.$route.params.skuid,
+        skuNum: this.skuNum,
+      });
+      if (res.code == 200) {
+        // alert("添加购物车" + res.message);
+        // 成功，跳转路由,将产品信息传过去
+        // 简单的单一的数据可以通过query参数传递过去
+        // 产品信息等复杂的数据可以存储在浏览器的会话存储的地方
+        sessionStorage.setItem("skuInfo", JSON.stringify(this.skuInfo));
+        // sessionStorage.setItem("skuAttr", JSON.stringify(this.skuAttr));
+        this.$router.push({
+          name: "addcartsuccess",
+          query: { skuNum: this.skuNum },
+        });
+      } else {
+        // 失败
+        alert("添加购物车" + res.message);
+      }
+
+      // 1.使用.then 方法 2.使用 async和await方法
+      // .then((result) => {
+      //   if (result.code == 200) {
+      //     console.log(result.message);
+      //   }
+      // });
+      // 判断请求状态，成功或者状态code=200表成功
+      // 2.成功带参数进行路由跳转
+      // 3.不成功，给用户提示
     },
   },
 };

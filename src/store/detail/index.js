@@ -1,8 +1,10 @@
-import { reqGoodsInfo } from 'api'
-
+import { reqGoodsInfo, reqAddOrUpdateShopCart } from 'api'
+// 封装游客身份模块uuid==>生成一个随机字符串不能再变
+import { getUUID } from '@/utils/uuid_token'
 
 const state = {
     goodInfo: {},
+    uuid_toKen: getUUID()
 
 }
 const mutations = {
@@ -17,6 +19,12 @@ const actions = {
         if (res.code == 200) {
             state.commit('GETGOODINFO', res.data)
         }
+    },
+    // 将产品加入到购物车中
+    addOrUpdateShopCart({ commit }, { skuId, skuNum }) {
+        return reqAddOrUpdateShopCart(skuId, skuNum)
+            //服务器写入数据成功，并没有返回其他数据，只返回了一个请求的成功或者失败的状态code=200代表此次操作成功。
+            // 所以不用在store中进行数据的存放
     }
 
 }

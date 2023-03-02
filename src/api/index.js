@@ -60,3 +60,20 @@ export const reqGoodsInfo = function(skuId) {
         method: "get"
     })
 }
+
+
+// 将产品加入购物车或者更新一个产品的个数
+export const reqAddOrUpdateShopCart = (skuId, skuNum) => request({
+    url: `/api/cart/addToCart/${ skuId }/${ skuNum }`,
+    method: "post"
+})
+
+
+
+// 获取购物车列表数据的接口 地址：/api/cart/cartList    GET
+export const reqCartList = function() {
+    return request({
+        url: '/api/cart/cartList',
+        method: 'get'
+    })
+}

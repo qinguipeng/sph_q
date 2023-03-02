@@ -10,6 +10,8 @@ import Search from 'pages/search/Search'
 import Login from 'pages/login/Login.vue'
 import Rigister from 'pages/rigister/Rigister.vue'
 import Detail from 'pages/detail/Detail.vue'
+import AddCartSuccess from 'pages/addCartSuccess/AddCartSuccess.vue'
+import ShopCart from 'pages/shopCart/ShopCart.vue'
 
 const routes = [
     // 注册路由组件
@@ -48,9 +50,19 @@ const routes = [
         meta: { show: false, title: "注册" }
     },
     {
-        path: "/detail:skuid",
+        path: "/detail/:skuid",
         component: Detail,
         meta: { show: false, title: "商品详情" }
+    }, {
+        path: "/addcartsuccess",
+        component: AddCartSuccess,
+        meta: { show: false, title: "添加购物车成功" },
+        name: "addcartsuccess"
+    }, {
+        path: "/shopcart",
+        component: ShopCart,
+        meta: { show: false, title: "购物车" },
+        name: "shopcart"
     }
 
 ]
