@@ -93,7 +93,7 @@
 import { mapState } from "vuex";
 
 // 引入lodash的节流函数
-import _ from "lodash";
+// import _ from "lodash";
 // console.log(_);
 // 按需引入
 import throttle from "lodash/throttle";
