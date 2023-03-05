@@ -97,3 +97,18 @@ export const reqUpdateCheckedById = (skuId, isChecked) => {
         method: 'GET'
     })
 }
+
+//15 获取验证码  /api/user/passport/sendCode/{phone} GET
+export const reqGetCode = (phone) => request({
+    url: `/api/user/passport/sendCode/${phone}`,
+    method: 'get'
+})
+
+// 16 请求地址 /api/user/passport/register   POST   参： phone  password code
+export const reqUserRegister = (data) => {
+    request({
+        url: '/api/user/passport/register',
+        data,
+        method: 'POST'
+    })
+}
