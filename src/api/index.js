@@ -112,3 +112,40 @@ export const reqUserRegister = (data) => {
         method: 'POST'
     })
 }
+
+
+// 2 登录      /api/user/passport/login   POST       phone  password
+export const reqUserLogin = (data) => request({
+    url: '/api/user/passport/login',
+    data,
+    method: "POST"
+})
+
+
+// 16.4 获取用户的信息 需要带着用户的token向服务器要用户信息   /api/user/passport/auth/getUserInfo  
+export const reqUserInfo = () => request({
+    url: '/api/user/passport/auth/getUserInfo',
+    method: 'GET'
+})
+
+
+
+// 17.退出登陆   /api/user/passport/logout   GET
+export const reqLogout = () => request({
+    url: '/api/user/passport/logout',
+    method: 'GET'
+})
+
+
+// 获取用户地址信息   /api/user/userAddress/auth/findUserAddressList  get
+export const reqAdressInfo = () => request({
+    url: '/api/user/userAddress/auth/findUserAddressList',
+    method: 'get'
+})
+
+
+// 10.获取订单交易页信息  /api/order/auth/trade    GET
+export const reqOrderInfo = () => request({
+    url: '/api/order/auth/trade',
+    method: 'get'
+})

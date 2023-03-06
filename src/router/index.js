@@ -12,6 +12,11 @@ import Rigister from 'pages/rigister/Rigister.vue'
 import Detail from 'pages/detail/Detail.vue'
 import AddCartSuccess from 'pages/addCartSuccess/AddCartSuccess.vue'
 import ShopCart from 'pages/shopCart/ShopCart.vue'
+import Trade from 'pages/trade/Trade.vue'
+
+// 引入store
+import store from 'store'
+
 
 const routes = [
     // 注册路由组件
@@ -43,6 +48,7 @@ const routes = [
         path: "/login",
         component: Login,
         meta: { show: false, title: "登录" }
+
     },
     {
         path: "/rigister",
@@ -63,6 +69,11 @@ const routes = [
         component: ShopCart,
         meta: { show: false, title: "购物车" },
         name: "shopcart"
+    }, {
+        path: "/trade",
+        component: Trade,
+        meta: { show: false, title: "结算" },
+        name: "trade"
     }
 
 ]
@@ -77,11 +88,37 @@ const router = new VueRouter({
 })
 
 //全局导航守卫
-
-router.beforeEach((to, from, next) => {
+router.beforeEach(async(to, from, next) => {
     // to and from are both route objects. must call `next`.
     document.title = to.meta.title
-    next()
+        // next()
+    let token = store.state.user.token;
+    let name = store.state.user.userInfo.name;
+    // 如果用户已经登录，就不能去登录界面，应该是去首页
+    if (token) {
+        // 登录了
+        if (to.path == '/login' || to.path == '/rigister') {
+            next('/home')
+        } else {
+            // 除了去/login、/rigister以外
+            if (name) {
+                // 如果登录了有用户信息放行
+                next()
+            } else {
+                try {
+                    // 没有用户信息，派发action，让仓库存储用户信息再跳转
+                    await store.dispatch('getUserInfo');
+                    next()
+                } catch (error) {
+                    // 程序走到这说明token失效了，获取不到用户的信息
+                    // 清除token
+                    await store.dispatch('userLogout');
+                    next('/login')
+                }
+            }
+
+        }
+    } else { next() }
 })
 
 export default router

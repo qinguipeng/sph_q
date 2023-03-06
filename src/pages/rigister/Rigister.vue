@@ -104,14 +104,20 @@ export default {
     async userRegister() {
       try {
         const { phone, code, password, password1, agree } = this;
-        if (phone && code && password && password == password1) {
+        if (
+          phone &&
+          code &&
+          password &&
+          password == password1 &&
+          agree == true
+        ) {
           await this.$store.dispatch("reqUserRegister", {
             phone,
             code,
             password,
           });
         }
-        如果成功-- - 路由跳转到登录;
+        // 如果成功-- - 路由跳转到登录;
         this.$router.push("/login");
       } catch (error) {
         alert(error.message);

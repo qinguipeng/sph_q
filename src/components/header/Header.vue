@@ -5,11 +5,15 @@
         <div class="container">
           <div class="loginList">
             <p>商品会欢迎您</p>
-            <p>
+            <p v-if="!userName">
               <span>请</span>
               <!-- 声明式使用路由组件 -->
               <router-link to="/login">登录 |</router-link>
               <router-link to="/rigister"> 免费注册</router-link>
+            </p>
+            <p v-else>
+              <a href="javascript:;">{{ userName }} |</a>
+              <a class="rigister" @click="logout"> 退出登录</a>
             </p>
           </div>
           <div class="typeList">
@@ -68,6 +72,12 @@ export default {
     this.$bus.$on("clear", () => {
       this.keyword = "";
     });
+  },
+  computed: {
+    // 用户名
+    userName() {
+      return this.$store.state.user.userInfo.name;
+    },
   },
   methods: {
     goSearch() {
@@ -128,6 +138,17 @@ export default {
       //     name: "search",
       //     params: { keyword: this.keyword || undefined },
       //   });
+    },
+    // 退出登录
+    async logout() {
+      try {
+        // 1. 发请求，退出登录
+        // 2. 清除项目中的用户信息
+        await this.$store.dispatch("userLogout");
+        this.$router.push("/home");
+      } catch (error) {
+        alert(error.message);
+      }
     },
   },
 };

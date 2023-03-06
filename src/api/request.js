@@ -19,12 +19,16 @@ const request = axios.create({
 // 请求拦截去
 request.interceptors.request.use((config) => {
     // config大当中包含一个请求头headers
-    // 2.nprogress进度条开始
-    nprogress.start();
     if (store.state.detail.uuid_toKen) {
         // 请求头添加一个字段（userTempId后台老师商量好的）
         config.headers.userTempId = store.state.detail.uuid_toKen
     }
+    if (store.state.user.token) {
+        config.headers.token = store.state.user.token
+    }
+
+    // 2.nprogress进度条开始
+    nprogress.start();
     return config
 })
 
