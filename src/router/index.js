@@ -13,7 +13,8 @@ import Detail from 'pages/detail/Detail.vue'
 import AddCartSuccess from 'pages/addCartSuccess/AddCartSuccess.vue'
 import ShopCart from 'pages/shopCart/ShopCart.vue'
 import Trade from 'pages/trade/Trade.vue'
-
+import Pay from 'pages/pay/Pay.vue'
+import PaySuccess from 'pages/paySuccess/PaySuccess.vue'
 // 引入store
 import store from 'store'
 
@@ -74,6 +75,16 @@ const routes = [
         component: Trade,
         meta: { show: false, title: "结算" },
         name: "trade"
+    }, {
+        path: "/pay",
+        component: Pay,
+        meta: { show: false, title: "支付" },
+        name: "pay"
+    }, {
+        path: "/paysuccess",
+        component: PaySuccess,
+        meta: { show: false, title: "支付成功" },
+        name: "paysuccess"
     }
 
 ]

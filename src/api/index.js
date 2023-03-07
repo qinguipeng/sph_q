@@ -5,6 +5,7 @@ import mockRequest from './mockRequest'
 
 
 
+
 //*************** 三级联动数据的接口函数
 // /api/product/getBaseCategoryList
 //    get  无参数
@@ -148,4 +149,27 @@ export const reqAdressInfo = () => request({
 export const reqOrderInfo = () => request({
     url: '/api/order/auth/trade',
     method: 'get'
+})
+
+
+//12.提交订单    /api/order/auth/submitOrder?tradeNo={tradeNo}   POST
+export const reqSubmitOrder = (tradeNo, data) => request({
+    url: `api/order/auth/submitOrder?tradeNo=${tradeNo}`,
+    data,
+    method: 'POST'
+})
+
+
+// 13.获取订单支付信息   /api/payment/weixin/createNative/{orderId}   GET   参 orderId
+export const reqPayInfo = (orderId) => request({
+    url: `/api/payment/weixin/createNative/${orderId}`,
+    method: 'get'
+})
+
+
+
+// 14.查询支付订单状态    /api/payment/weixin/queryPayStatus/{orderId}    GET  参orderId
+export const reqPaymentStatus = (orderId) => request({
+    url: `/api/payment/weixin/queryPayStatus/${orderId}`,
+    method: "GET"
 })
