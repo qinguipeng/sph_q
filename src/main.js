@@ -9,6 +9,14 @@ import Carousel from 'components/carousel/Carousel.vue';
 import Pagination from 'components/pagination/Pagination.vue';
 // 引入elementUI
 import { Button, MessageBox } from 'element-ui';
+// 引入懒加载
+import VueLazyload from 'vue-lazyload';
+import LoadingImg from "@/assets/LoadingImg.png"
+Vue.use(VueLazyload, {
+    // 配置
+    // 图片懒加载默认图
+    loading: LoadingImg
+})
 
 // 及注册
 // 第一个参数：组件的name, 第二个参数：哪一个组件
@@ -35,7 +43,13 @@ import "@/mock/mockServer"
 import "swiper/css/swiper.css"
 // 统一接收api文件夹里面全部请求函数,也叫统一引入
 import * as API from 'api'
-// 
+
+
+//引入自定义插件
+import myPlugins from '@/plugins/myPlugins'
+Vue.use(myPlugins, { name: 'upper' })
+
+
 
 
 Vue.config.productionTip = false

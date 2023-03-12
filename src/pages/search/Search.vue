@@ -79,7 +79,7 @@
                     <!-- <a href="item.html" target="_blank"> -->
                     <!-- 路由跳转的时候需要带参数 -->
                     <router-link :to="`/detail/${good.id}`">
-                      <img :src="good.defaultImg" />
+                      <img v-lazy="good.defaultImg" />
                     </router-link>
 
                     <!-- </a> -->

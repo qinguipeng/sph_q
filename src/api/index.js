@@ -63,7 +63,7 @@ export const reqGoodsInfo = function(skuId) {
 }
 
 
-// 将产品加入购物车或者更新一个产品的个数
+//7.添加到购物车(对已有物品进行数量改动)
 export const reqAddOrUpdateShopCart = (skuId, skuNum) => request({
     url: `/api/cart/addToCart/${ skuId }/${ skuNum }`,
     method: "post"
@@ -94,7 +94,7 @@ export const reqDeleteCartById = (skuId) => {
 
 export const reqUpdateCheckedById = (skuId, isChecked) => {
     request({
-        url: `/api/cart/checkCart/${skuId }/${isChecked}`,
+        url: `/api/cart/checkCart/${skuId}/${isChecked}`,
         method: 'GET'
     })
 }
@@ -138,7 +138,7 @@ export const reqLogout = () => request({
 })
 
 
-// 获取用户地址信息   /api/user/userAddress/auth/findUserAddressList  get
+//获取用户地址信息  /api/user/userAddress/auth/findUserAddressList  get
 export const reqAdressInfo = () => request({
     url: '/api/user/userAddress/auth/findUserAddressList',
     method: 'get'
@@ -171,5 +171,12 @@ export const reqPayInfo = (orderId) => request({
 // 14.查询支付订单状态    /api/payment/weixin/queryPayStatus/{orderId}    GET  参orderId
 export const reqPaymentStatus = (orderId) => request({
     url: `/api/payment/weixin/queryPayStatus/${orderId}`,
+    method: "GET"
+})
+
+
+// 11.获取我的订单列表   /api/order/auth/{page}/{limit}    GET   page limit
+export const reqMyOrderlist = (page, limit) => request({
+    url: `/api/order/auth/${page}/${limit}`,
     method: "GET"
 })

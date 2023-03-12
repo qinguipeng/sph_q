@@ -92,7 +92,10 @@
           <i class="summoney">{{ totalPrice }}</i>
         </div>
         <div class="sumbtn">
-          <router-link to="/trade" class="sum-btn">结算</router-link>
+          <!-- <router-link to="/trade" class="sum-btn" "
+            >结算</router-link
+          > -->
+          <a class="sum-btn" @click="sendOrderInfo">结算</a>
         </div>
       </div>
     </div>
@@ -107,9 +110,39 @@ import throttle from "lodash/throttle";
 
 export default {
   name: "ShopCart",
+  data() {
+    return {
+      addressInfo: [],
+      orderInfo: {},
+    };
+  },
 
   mounted() {
     this.getData();
+    // 不使用vux
+    // this.$API
+    //   .reqAdressInfo()
+    //   .then((result) => {
+    //     // console.log(result);
+    //     if (result.code == 200) {
+    //       this.addressInfo = result.data;
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     throw err;
+    //   });
+
+    // this.$API
+    //   .reqOrderInfo()
+    //   .then((result) => {
+    //     // console.log(result);
+    //     if (result.code == 200) {
+    //       this.orderInfo = result.data;
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     throw err;
+    //   });
   },
 
   computed: {
@@ -292,6 +325,14 @@ export default {
       } catch (error) {
         alert(error.message);
       }
+    },
+
+    // 发送订单页面所需数据
+    sendOrderInfo() {
+      let { addressInfo, orderInfo } = this;
+      this.$bus.$emit("getOrderInfo", { addressInfo, orderInfo });
+      // console.log({ addressInfo, orderInfo });
+      this.$router.push("/trade");
     },
   },
 };

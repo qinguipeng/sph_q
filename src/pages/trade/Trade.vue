@@ -9,7 +9,9 @@
         v-for="(address, index) in addressInfo"
         :key="address.id"
       >
-        <span class="username selected">{{ address.consignee }}</span>
+        <span class="username" :class="{ selected: address.isDefault }">{{
+          address.consignee
+        }}</span>
         <p @click="changeDefault(address, addressInfo)">
           <span class="s1">{{ address.fullAddress }}</span>
           <span class="s2">{{ address.phoneNum }}</span>
@@ -44,11 +46,7 @@
           :key="order.skuId"
         >
           <li>
-            <img
-              :src="order.imgUrl"
-              alt=""
-              style="width: 100px; height: 100px"
-            />
+            <img :src="order.imgUrl" style="width: 100px; height: 100px" />
           </li>
           <li>
             <p>
@@ -57,9 +55,9 @@
             <h4>7天无理由退货</h4>
           </li>
           <li>
-            <h3>￥{{ order.orderPrice }}</h3>
+            <h3>￥{{ orderInfo.orderPrice }}</h3>
           </li>
-          <li>X{{ order.skuNum }}</li>
+          <li>X{{ orderInfo.skuNum }}</li>
           <li>有货</li>
         </ul>
       </div>
@@ -84,10 +82,10 @@
       <ul>
         <li>
           <b
-            ><i>{{ order.totalNum }}</i
+            ><i>{{ orderInfo.totalNum }}</i
             >件商品，总商品金额</b
           >
-          <span>¥{{ order.totalAmount }}</span>
+          <span>¥{{ orderInfo.totalAmount }}</span>
         </li>
         <li>
           <b>返现：</b>
@@ -124,16 +122,50 @@ export default {
       msg: "",
       // 订单号
       orderId: "",
+      addressInfo: [],
+      orderInfo: {},
     };
   },
   created() {
-    this.$store.dispatch("getUserAdress");
-    this.$store.dispatch("getOrderInfo");
+    //   // 不使用vux
+    this.$API
+      .reqAdressInfo()
+      .then((result) => {
+        // console.log(result);
+        if (result.code == 200) {
+          this.addressInfo = result.data;
+        }
+      })
+      .catch((err) => {
+        throw err;
+      });
+    this.$API
+      .reqOrderInfo()
+      .then((result) => {
+        // console.log(result);
+        if (result.code == 200) {
+          this.orderInfo = result.data;
+        }
+      })
+      .catch((err) => {
+        throw err;
+      });
+    // 使用$bus;
+    // this.$bus.$on("getOrderInfo ", (payload) => {
+    //   this.addressInfo = payload.addressInfo;
+    //   this.orderInfo = payload.orderInfo;
+    //   console.log(payload);
+    // });
+  },
+  mounted() {
+    // 使用vuex;
+    // this.$store.dispatch("getUserAdress");
+    // this.$store.dispatch("getOrderInfo");
   },
   computed: {
     ...mapState({
-      addressInfo: (state) => state.trade.address,
-      orderInfo: (state) => state.trade.orderInfo,
+      // addressInfo: (state) => state.trade.address,
+      // orderInfo: (state) => state.trade.orderInfo,
       // addressInfo() {
       //   return this.$store.state.trade.address || [];
       // },

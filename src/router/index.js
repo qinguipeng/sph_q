@@ -15,6 +15,12 @@ import ShopCart from 'pages/shopCart/ShopCart.vue'
 import Trade from 'pages/trade/Trade.vue'
 import Pay from 'pages/pay/Pay.vue'
 import PaySuccess from 'pages/paySuccess/PaySuccess.vue'
+import Center from 'pages/center/Center.vue'
+// 引入二级路由组件
+import MyOrder from 'pages/center/myOrder/MyOrder.vue'
+import GroupOrder from 'pages/center/groupOrder/GroupOrder.vue'
+
+
 // 引入store
 import store from 'store'
 
@@ -74,17 +80,57 @@ const routes = [
         path: "/trade",
         component: Trade,
         meta: { show: false, title: "结算" },
-        name: "trade"
+        name: "trade",
+        beforeEnter: (to, from, next) => {
+            // 去交易页面必须是从购物车而来
+            if (from.path == "/shopcart") {
+                next()
+            } else {
+                // 不是从购物车而来就停留在当前路由
+                next(false)
+            }
+            // next()
+        }
     }, {
         path: "/pay",
         component: Pay,
         meta: { show: false, title: "支付" },
-        name: "pay"
+        name: "pay",
+        beforeEnter: (to, from, next) => {
+            // ...
+            if (from.path == "/trade") {
+                next()
+            } else {
+                next(false)
+            }
+        }
+
     }, {
         path: "/paysuccess",
         component: PaySuccess,
         meta: { show: false, title: "支付成功" },
         name: "paysuccess"
+    }, {
+        path: "/center",
+        component: Center,
+        meta: { show: false, title: "个人中心" },
+        name: "center",
+        // 二级路由
+        children: [{
+            //重定向
+            path: '/center',
+            redirect: '/center/myorder',
+
+
+        }, {
+            path: 'myorder',
+            component: MyOrder,
+            meta: { show: false, title: "我的订单" },
+        }, {
+            path: 'grouporder',
+            component: GroupOrder,
+            meta: { show: false, title: "团购订单" },
+        }]
     }
 
 ]
@@ -129,7 +175,19 @@ router.beforeEach(async(to, from, next) => {
             }
 
         }
-    } else { next() }
+    } else {
+        // 如果没带token，说明未登录，不能去交易相关/trade、支付相关/pay、/paysuccess、个人中心/center,
+        // 未登录去上面的页面就得跳转去登录/login
+        let toPath = to.path
+        if (toPath.indexOf('/trade') != -1 || toPath.indexOf("/pay") != -1 || toPath.indexOf("/center") != -1) {
+            // 把未登录时想去但是没有去成的参数存在路由query参数中
+            next('/login?redirect=' + toPath)
+        } else {
+            next()
+        }
+
+
+    }
 })
 
 export default router
